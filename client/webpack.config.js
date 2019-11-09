@@ -1,17 +1,19 @@
-const webpack = require('webpack');
-const ejs = require('ejs');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ExtensionReloader = require('webpack-extension-reloader');
-const { VueLoaderPlugin } = require('vue-loader');
-const { version } = require('./package.json');
+const webpack = require('webpack')
+const ejs = require('ejs')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const ExtensionReloader = require('webpack-extension-reloader')
+const { VueLoaderPlugin } = require('vue-loader')
+const { version } = require('./package.json')
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const Fiber = require('fibers')
 
 const config = {
   mode: process.env.NODE_ENV,
   context: __dirname + '/src',
   entry: {
     'background': './background.js',
-    'popup/popup': './popup/popup.js',
+    'popup': './popup.js',
   },
   output: {
     path: __dirname + '/dist',
@@ -37,28 +39,45 @@ const config = {
       },
       {
         test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [{
+          loader: "style-loader"
+        }, {
+          loader: "css-loader"
+        }, {
+          loader: "sass-loader",
+          options: {
+            implementation: require("sass"),
+            fiber: Fiber
+          }
+        }]
       },
       {
         test: /\.sass$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader?indentedSyntax'],
+        use: [{
+          loader: "style-loader"
+        }, {
+          loader: "css-loader"
+        }, {
+          loader: "sass-loader",
+          options: {
+            implementation: require("sass"),
+            fiber: Fiber
+          }
+        }]
       },
       {
-        test: /\.(png|jpg|jpeg|gif|svg|ico)$/,
+        test: /\.(png|jpg|gif|svg|ico)$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]',
-          outputPath: '/images/',
-          emitFile: false,
+          name: '[name].[ext]?emitFile=false',
         },
       },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]',
-          outputPath: '/fonts/',
-          emitFile: false,
+          name: '[name].[ext]?emitFile=false',
+          outputPath: '/fonts/'
         },
       },
     ],
@@ -68,29 +87,30 @@ const config = {
       global: 'window',
     }),
     new VueLoaderPlugin(),
+    new VuetifyLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
     new CopyWebpackPlugin([
       { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-      { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
+      { from: 'popup.html', to: 'popup.html', transform: transformHtml },
       {
         from: 'manifest.json',
         to: 'manifest.json',
         transform: (content) => {
-          const jsonContent = JSON.parse(content);
-          jsonContent.version = version;
+          const jsonContent = JSON.parse(content)
+          jsonContent.version = version
 
           if (config.mode === 'development') {
-            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'";
+            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval' object-src 'self'"
           }
 
-          return JSON.stringify(jsonContent, null, 2);
+          return JSON.stringify(jsonContent, null, 2)
         },
       },
     ]),
   ],
-};
+}
 
 if (config.mode === 'production') {
   config.plugins = (config.plugins || []).concat([
@@ -99,7 +119,7 @@ if (config.mode === 'production') {
         NODE_ENV: '"production"',
       },
     }),
-  ]);
+  ])
 }
 
 if (process.env.HMR === 'true') {
@@ -107,13 +127,13 @@ if (process.env.HMR === 'true') {
     new ExtensionReloader({
       manifest: __dirname + '/src/manifest.json',
     }),
-  ]);
+  ])
 }
 
 function transformHtml(content) {
   return ejs.render(content.toString(), {
     ...process.env,
-  });
+  })
 }
 
-module.exports = config;
+module.exports = config

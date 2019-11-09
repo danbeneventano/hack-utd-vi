@@ -1,7 +1,7 @@
 {
   "name": "client",
-  "description": "HackUTDVI",
-  "version": null,
+  "description": "A Vue.js web extension",
+  "version": "0.0.1",
   "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",
@@ -9,11 +9,21 @@
   },
   "browser_action": {
     "default_title": "client",
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup.html"
   },
   "background": {
     "scripts": [
       "background.js"
     ]
-  }
+  },
+  "permissions": [
+    "https://*/*",
+    "http://*/*",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "cookies",
+    "<all_urls>"
+  ]
 }
