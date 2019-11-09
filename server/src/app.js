@@ -32,10 +32,19 @@ router.get("/analyzeEntities", async (req, res) => {
         sentimentMagnitude.push(entity.sentiment.magnitude);
         sentimentScore.push(entity.sentiment.score);
     }
+    console.log(text.length + ": " + entityNames.length);
     for(let i = 0; i < entityNames.length; ++i){
-        console.log(entityNames[i]);
-        console.log();
-        filteredEntities[i].description = " fdf"
+        if(Math.abs(sentimentScore[i]) < 0.15 && sentimentMagnitude[i] < 3){
+            filteredEntities[i].description = "The text provides a mixed bias on this."
+        }else if(sentimentScore[i] > .15 && sentimentMagnitude[i] > 3 ){
+            filteredEntities[i].description = "The text provides a very positive bias on this."
+        }else if(sentimentScore[i] > .15 && sentimentMagnitude[i] < 3 ){
+            filteredEntities[i].description = "The text provides a positive bias on this."
+        }else if(sentimentScore[i] < -.15 && sentimentMagnitude[i] > 3 ){
+            filteredEntities[i].description = "The text provides a very negative bias on this."
+        }else if(sentimentScore[i] < -.15 && sentimentMagnitude[i] < 3 ){
+            filteredEntities[i].description = "The text provides a negative bias on this."
+        }
     }
     res.status(200).send({ entities: filteredEntities});
 
