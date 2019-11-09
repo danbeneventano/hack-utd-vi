@@ -20,8 +20,33 @@ router.get("/analyze", async (req, res) => {
 router.get("/analyzeEntities", async (req, res) => {
     const { text } = req.body
     const [result] = await analyzeEntitySentiment(text)
-    res.status(200).send({ entities: result.entities.filter(entity =>
-            Math.abs(entity.sentiment.magnitude) > 1) })
+    const filteredEntities = result.entities.filter(entity =>
+        Math.abs(entity.sentiment.magnitude) > 1);
+    //res.status(200).send({ entities: filteredEntities});
+    //result.blah.description = "what"
+    let entityNames = [];
+    let sentimentMagnitude = [];
+    let sentimentScore = [];
+    for (const entity of filteredEntities) {
+        entityNames.push(`${entity.name}`);
+        sentimentMagnitude.push(entity.sentiment.magnitude);
+        sentimentScore.push(entity.sentiment.score);
+    }
+    for(let i = 0; i < entityNames.length; ++i){
+        console.log(entityNames[i]);
+        console.log();
+        filteredEntities[i].description = " fdf"
+    }
+    res.status(200).send({ entities: filteredEntities});
+
+
+
+
+
+
+    // res.status(200).send(entities: entityNames);
+    // res.status(200).send(sentimentMagnitude);
+
 })
 
 app.listen(3000, () => console.log('Server listening on port 3000'))
