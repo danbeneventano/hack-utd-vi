@@ -21,7 +21,7 @@ router.get("/analyzeEntities", async (req, res) => {
     const { text } = req.body
     const [result] = await analyzeEntitySentiment(text)
     const filteredEntities = result.entities.filter(entity =>
-        Math.abs(entity.sentiment.magnitude) > 1);
+        Math.abs(entity.sentiment.magnitude) > 0);
     //res.status(200).send({ entities: filteredEntities});
     //result.blah.description = "what"
     let entityNames = [];
@@ -34,27 +34,20 @@ router.get("/analyzeEntities", async (req, res) => {
     }
     console.log(text.length + ": " + entityNames.length);
     for(let i = 0; i < entityNames.length; ++i){
-        if(Math.abs(sentimentScore[i]) < 0.15 && sentimentMagnitude[i] < 3){
+        if(Math.abs(sentimentScore[i]) < 0.2 && sentimentMagnitude[i] < 3){
             filteredEntities[i].description = "The text provides a mixed bias on this."
-        }else if(sentimentScore[i] > .15 && sentimentMagnitude[i] > 3 ){
-            filteredEntities[i].description = "The text provides a very positive bias on this."
-        }else if(sentimentScore[i] > .15 && sentimentMagnitude[i] < 3 ){
+        }else if(sentimentScore[i] > 0.3 && sentimentMagnitude[i] > 3 ){
+            filteredEntities[i].description = "The text provides a clearly positive bias on this."
+        }else if(sentimentScore[i] > 0.3 && (sentimentMagnitude[i] < 3 && sentimentMagnitude > 1.75)){
             filteredEntities[i].description = "The text provides a positive bias on this."
-        }else if(sentimentScore[i] < -.15 && sentimentMagnitude[i] > 3 ){
-            filteredEntities[i].description = "The text provides a very negative bias on this."
-        }else if(sentimentScore[i] < -.15 && sentimentMagnitude[i] < 3 ){
+        }else if(sentimentScore[i] < -0.3 && sentimentMagnitude[i] > 3 ){
+            filteredEntities[i].description = "The text provides a clearly negative bias on this."
+        }else if(sentimentScore[i] < -0.3 && (sentimentMagnitude[i] < 3 && sentimentMagnitude > 1.75)){
             filteredEntities[i].description = "The text provides a negative bias on this."
         }
     }
     res.status(200).send({ entities: filteredEntities});
 
-
-
-
-
-
-    // res.status(200).send(entities: entityNames);
-    // res.status(200).send(sentimentMagnitude);
 
 })
 
