@@ -11,9 +11,29 @@ app.use(cors())
 const router = express.Router()
 app.use("/api", router)
 
+
 router.post("/analyze", async (req, res) => {
     const { text } = req.body
-    const sentiment = await analyzeSentiment(text)
+    const [sentiment] = await analyzeSentiment(text)
+    const magnitude = sentiment.documentSentiment.magnitude;
+    const score = sentiment.documentSentiment.score;
+    const max = 0.01 * text.length;
+    const emotionScore =(magnitude / max * 100);
+    sentiment.emotionScore = emotionScore;
+    if(score > .7 &&  emotionScore > 50){
+        sentiment.description = "The text provides mixed bias."
+    }else if(score > 0.3  &&  emotionScore > 50  ){
+        sentiment.description = "The text is clearly positive."
+    }else if(score > 0 && emotionScore > 25 ){
+        sentiment.description = "The text is fairly positive."
+    }else if(score < -0.3 && emotionScore > 50 ){
+        sentiment.description = "The text is clearly negative."
+    }else if(score < 0 &&  emotionScore > 25) {
+        sentiment.description = "The text is fairly negative."
+    }else if(score < .75 && emotionScore <= 50){
+        sentiment.description = "The text is fairly neutral."
+    }
+    console.log(`${magnitude} is magnitude and ${score} is score`);
     res.status(200).send(sentiment)
 })
 
