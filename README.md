@@ -14,4 +14,4 @@ Instructions for Chromium-based browsers
 7. Emotilyzer is now installed. Pages you already have open must be refreshed for it to work.
 
 # Usage
-Activate the extension by click it's icon in the top right of your browser. The extension works best on news articles but can be activated anywhere.
+Activate the extension by clicking it's icon in the top right of your browser. The extension works best on news articles but can be activated anywhere.
