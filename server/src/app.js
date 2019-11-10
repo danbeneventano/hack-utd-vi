@@ -21,7 +21,7 @@ router.get("/analyzeEntities", async (req, res) => {
     const { text } = req.body
     const [result] = await analyzeEntitySentiment(text)
     const filteredEntities = result.entities.filter(entity =>
-        Math.abs(entity.sentiment.magnitude) > 0);
+        Math.abs(entity.sentiment.magnitude) > .2);
     //res.status(200).send({ entities: filteredEntities});
     //result.blah.description = "what"
     let entityNames = [];
@@ -34,7 +34,7 @@ router.get("/analyzeEntities", async (req, res) => {
     }
     console.log(text.length + ": " + entityNames.length);
     for(let i = 0; i < entityNames.length; ++i){
-        if(Math.abs(sentimentScore[i]) < 0.2 && sentimentMagnitude[i] < 3){
+        if(Math.abs(sentimentScore[i]) < 0.02 && sentimentMagnitude[i] < 3){
             filteredEntities[i].description = "The text provides a mixed bias on this."
         }else if(sentimentScore[i] > 0.3 && sentimentMagnitude[i] > 3 ){
             filteredEntities[i].description = "The text provides a clearly positive bias on this."
@@ -46,7 +46,9 @@ router.get("/analyzeEntities", async (req, res) => {
             filteredEntities[i].description = "The text provides a negative bias on this."
         }
     }
-    res.status(200).send({ entities: filteredEntities});
+
+    res.status(200).send({ entities:  result.entities.filter(entity =>
+            entity.description)});
 
 
 })
