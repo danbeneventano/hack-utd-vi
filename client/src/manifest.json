@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "manifest_version": 2,
   "icons": {
-    "48": "icons/icon_48.png",
-    "128": "icons/icon_128.png"
+    "48": "icons/Emotilyzer_headonly_transparent_48.png",
+    "128": "icons/Emotilyzer_headonly_transparent_128.png"
   },
   "browser_action": {
     "default_title": "Emotilyzer",

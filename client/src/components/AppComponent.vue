@@ -10,6 +10,7 @@
                             </span>
                         </v-progress-circular>
                         <p v-if="!loaded" class="pt-4">Analyzing webpage...</p>
+                        <p v-if="!loaded" class="pt-8 caption">Tip: Not working? Try refreshing the page.</p>
                         <v-slide-y-transition>
                             <div v-show="loaded">
                                 <p class="body-2 pt-4" :style="{ color: color }">{{$root.description}}</p>

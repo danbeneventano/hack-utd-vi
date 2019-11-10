@@ -17,8 +17,8 @@ router.post("/analyze", async (req, res) => {
     const [sentiment] = await analyzeSentiment(text)
     const magnitude = sentiment.documentSentiment.magnitude;
     const score = sentiment.documentSentiment.score;
-    const max = 0.0035 * text.length;
-    const emotionScore = Math.min(Math.max(Math.round(magnitude / max * 100), 0), 100);
+    const max = 0.35 * text.length;
+    const emotionScore = Math.min(Math.max(Math.round(magnitude / max), 0), 100);
     sentiment.emotionScore = emotionScore;
     if (emotionScore < 25) {
         sentiment.description = "The text does not have much emotion."
