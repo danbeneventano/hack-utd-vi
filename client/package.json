@@ -1,5 +1,5 @@
 {
-  "name": "emotilyzer-client",
+  "name": "emotilyze-client",
   "version": "1.0.0",
   "description": "Analyze the emotional content of any webpage.",
   "author": "Dan Beneventano <danbeneventano@gmail.com>",

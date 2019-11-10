@@ -24,7 +24,7 @@
             <v-container class="fill-height" v-else>
                 <v-row align="center" justify="center" class="fill-height">
                     <v-col align="center" justify="center">
-                        <p class="subtitle-1">Emotilyzer is disabled on this page.</p>
+                        <p class="subtitle-1">Emotilyze is disabled on this page.</p>
                     </v-col>
                 </v-row>
             </v-container>

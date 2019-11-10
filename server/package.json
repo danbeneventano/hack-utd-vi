@@ -1,5 +1,5 @@
 {
-  "name": "emotilyzer-server",
+  "name": "emotilyze-server",
   "scripts": {
     "start": "node -r esm src/app.js",
     "dev": "nodemon -r esm src/app.js"
