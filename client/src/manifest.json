@@ -16,14 +16,21 @@
       "background.js"
     ]
   },
+  "content_scripts": [
+    {
+      "matches" : [
+        "*://*/*"
+      ],
+      "js" : [
+        "content.js"
+      ],
+      "css" : [
+        "balloon.min.css"
+      ]
+    }
+  ],
   "permissions": [
-    "https://*/*",
-    "http://*/*",
-    "tabs",
-    "webRequest",
-    "webRequestBlocking",
-    "storage",
-    "cookies",
-    "<all_urls>"
+    "contextMenus",
+    "activeTab"
   ]
 }

@@ -14,45 +14,45 @@ Vue.config.productionTip = false
 global.browser = require('webextension-polyfill')
 Vue.prototype.$browser = global.browser
 
-chrome.storage.local.get(['primaryLight', 'primaryDark', 'secondaryLight', 'secondaryDark', 'darkMode'], result => {
-  let vuetify = new Vuetify({
-    theme: {
-      options: {
-        customProperties: true,
+let vuetify = new Vuetify({
+  theme: {
+    options: {
+      customProperties: true,
+    },
+    dark: false,
+    themes: {
+      light: {
+        primary: default_theme.primaryLight,
+        secondary: default_theme.secondaryLight,
+        accent: '#B388FF',
+        error: '#F44336',
+        warning: '#FF9800',
+        info: '#607D8B',
+        success: '#4CAF50'
       },
-      dark: result.darkMode === undefined ? false : result.darkMode,
-      themes: {
-        light: {
-          primary: result.primaryLight === undefined ? default_theme.primaryLight : result.primaryLight,
-          secondary: result.secondaryLight === undefined ? default_theme.secondaryLight : result.secondaryLight,
-          accent: '#B388FF',
-          error: '#F44336',
-          warning: '#FF9800',
-          info: '#607D8B',
-          success: '#4CAF50'
-        },
-        dark: {
-          primary: result.primaryDark === undefined ? default_theme.primaryDark : result.primaryDark,
-          secondary: result.secondaryDark === undefined ? default_theme.secondaryDark : result.secondaryDark,
-          accent: '#B388FF',
-          error: '#F44336',
-          warning: '#FF9800',
-          info: '#607D8B',
-          success: '#4CAF50'
-        },
+      dark: {
+        primary: default_theme.primaryDark,
+        secondary: default_theme.secondaryDark,
+        accent: '#B388FF',
+        error: '#F44336',
+        warning: '#FF9800',
+        info: '#607D8B',
+        success: '#4CAF50'
       },
     },
-    icons: {
-      iconfont: 'mdi',
-    },
-  })
-
-  const vm = new Vue({
-    el: '#app',
-    vuetify,
-    data: {},
-    render: h => h(AppComponent)
-  })
+  },
+  icons: {
+    iconfont: 'mdi',
+  },
 })
 
+const vm = new Vue({
+  el: '#app',
+  vuetify,
+  data: {},
+  render: h => h(AppComponent)
+})
 
+chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+  chrome.tabs.sendMessage(tabs[0].id, { activate: true });
+});

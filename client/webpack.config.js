@@ -14,6 +14,8 @@ const config = {
   entry: {
     'background': './background.js',
     'popup': './popup.js',
+    'content': './content.js',
+    'balloon.min': './balloon.min.css'
   },
   output: {
     path: __dirname + '/dist',
@@ -102,7 +104,7 @@ const config = {
           jsonContent.version = version
 
           if (config.mode === 'development') {
-            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval' object-src 'self'"
+            jsonContent['content_security_policy'] = "script-src 'self' 'unsafe-eval'; object-src 'self'"
           }
 
           return JSON.stringify(jsonContent, null, 2)
