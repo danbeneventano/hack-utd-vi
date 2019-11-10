@@ -26,10 +26,13 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             let entityData = (await axios.post(`${API_URL}/analyzeEntities`, {text})).data
             overallData = (await axios.post(`${API_URL}/analyze`, {text})).data
             let highlighted = false
+            let mentions = 0
             if (entityData.entities.length > 0) {
                 highlighted = true
                 for (const entity of entityData.entities) {
                     for (const mention of entity.mentions) {
+                        mentions++
+                        console.log(mention.sentiment.magnitude)
                         if (!map.has(entity.name)) {
                             map.set(entity.name,
                                 {
@@ -58,7 +61,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 emotionScore: overallData.emotionScore,
                 description: overallData.description,
                 highlighted: highlighted,
-                color: overallData.color
+                color: overallData.color,
+                highlightCount: mentions
             }
             chrome.runtime.sendMessage(sentDoc)
             break

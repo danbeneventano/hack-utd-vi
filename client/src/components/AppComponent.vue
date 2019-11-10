@@ -15,7 +15,7 @@
                             <div v-show="loaded">
                                 <p class="body-2 pt-4" :style="{ color: color }">{{$root.description}}</p>
                                 <p class="caption">Emotion Score: {{$root.emotionScore}}%</p>
-                                <p class="pt-2" v-if="$root.highlighted">Words mentioned in an emotional context have been highlighted.</p>
+                                <p class="pt-2" v-if="$root.highlighted">{{$root.highlightCount}} words mentioned in an emotional context have been highlighted.</p>
                             </div>
                         </v-slide-y-transition>
                     </v-col>

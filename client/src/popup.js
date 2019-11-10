@@ -53,7 +53,8 @@ const vm = new Vue({
           emotionScore: 0,
             description: '',
             highlighted: false,
-            disabled: false
+            disabled: false,
+            highlightCount: 0
         }
     },
     render: h => h(AppComponent),
@@ -71,7 +72,7 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     switch (request.type) {
         case "emotionScore":
-            const { emotionScore, color, description, highlighted } = request
+            const { emotionScore, color, description, highlighted, highlightCount } = request
             const text = `${emotionScore}%`
             chrome.browserAction.setBadgeBackgroundColor({color})
             chrome.browserAction.setBadgeText({text})
@@ -79,6 +80,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 vm.emotionScore = emotionScore
                 vm.description = description
                 vm.highlighted = highlighted
+                vm.highlightCount = highlightCount
             }, 25)
             break
         default:

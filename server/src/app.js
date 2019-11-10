@@ -11,14 +11,13 @@ app.use(cors())
 const router = express.Router()
 app.use("/api", router)
 
-
 router.post("/analyze", async (req, res) => {
     const {text} = req.body
     const [sentiment] = await analyzeSentiment(text)
     const magnitude = sentiment.documentSentiment.magnitude;
     const score = sentiment.documentSentiment.score;
-    const max = 0.35 * text.length;
-    const emotionScore = Math.min(Math.max(Math.round(magnitude / max), 0), 100);
+    const max = 0.0035 * text.length;
+    const emotionScore = Math.min(Math.max(Math.round(magnitude / max * 100), 0), 100);
     sentiment.emotionScore = emotionScore;
     if (emotionScore < 25) {
         sentiment.description = "The text does not have much emotion."
@@ -50,8 +49,8 @@ router.post("/analyze", async (req, res) => {
 router.post("/analyzeEntities", async (req, res) => {
     const {text} = req.body
     const [result] = await analyzeEntitySentiment(text)
-    const filteredEntities = result.entities.filter(entity =>
-        Math.abs(entity.sentiment.magnitude) > 0);
+    const filteredEntities = result.entities/*.filter(entity =>
+        Math.abs(entity.sentiment.magnitude) > 0);*/
     let entityNames = [];
     let sentimentMagnitude = [];
     let sentimentScore = [];
@@ -71,29 +70,32 @@ router.post("/analyzeEntities", async (req, res) => {
             const fairlyColor = "#ffc947"
             const clearlyColor = "#ff867c"
 
-            if (score >= .1 && score < .45) {
+            if (score > .21 && score < .45) {
                 description = "This appears to be mentioned in the context of fairly positive emotion."
                 Object.assign(mention, { description: description, color: fairlyColor })
-            } else if (score >= .45 && score <= 1) {
+                newMentions.push(mention)
+            } else if (score >= .45) {
                 description = "This appears to be mentioned in the context of clearly positive emotion."
                 Object.assign(mention, { description: description, color: clearlyColor })
-            } else if (score <= -.1 && score > -.45) {
+                newMentions.push(mention)
+            } else if (score < -.21 && score > -.45) {
                 description = "This appears to be mentioned in the context of fairly negative emotion."
                 Object.assign(mention, { description: description, color: fairlyColor })
-            } else if (score <= -.45 && score >= -1) {
+                newMentions.push(mention)
+            } else if (score <= -.45) {
                 description = "This appears to be mentioned in the context of clearly negative emotion."
                 Object.assign(mention, { description: description, color: clearlyColor })
+                newMentions.push(mention)
             }
-            newMentions.push(mention)
         }
         entity.mentions = newMentions
     }
 
     //Loops through each name and says if that topic and describes if there is bias from the total sentiment scores.
-    for (let i in entityNames) {
-        if (Math.abs(sentimentScore[i]) < 0.002 && sentimentMagnitude[i] > 3) {
+    /*for (let i in entityNames) {
+        if (Math.abs(sentimentScore[i]) < 0.002 && sentimentMagnitude[i] > 2) {
             filteredEntities[i].description = "The text provides a mixed bias on this."
-        } else if (sentimentScore[i] > 0.3 && sentimentMagnitude[i] > 3) {
+        } else if (sentimentScore[i] > 0.1 && sentimentMagnitude[i] > 2) {
             filteredEntities[i].description = "The text provides a clearly positive bias on this."
         } else if (sentimentScore[i] > 0.3 && (sentimentMagnitude[i] < 3 && sentimentMagnitude[i] > 1)) {
             filteredEntities[i].description = "The text provides a positive bias on this."
@@ -102,11 +104,11 @@ router.post("/analyzeEntities", async (req, res) => {
         } else if (sentimentScore[i] < -0.3 && (sentimentMagnitude[i] < 3 && sentimentMagnitude[i] > 1)) {
             filteredEntities[i].description = "The text provides a negative bias on this."
         }
-    }
+    }*/
 
     res.status(200).send({
-        entities: result.entities.filter(entity =>
-            entity.description)
+        entities: result.entities/*.filter(entity =>
+            entity.description)*/
     });
 
 })
