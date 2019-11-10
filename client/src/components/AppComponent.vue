@@ -1,18 +1,20 @@
 <template>
-    <v-app id="app" style="width: 200px; height: 300px">
+    <v-app id="app" style="width: 200px; height: 300px; background-color: #FAFAFA">
         <v-content>
-            <v-container>
-                <v-row align="center" justify="center" class="fill-height">
-                    <v-col align="center" justify="center">
-                        <v-progress-circular :color="color" :indeterminate="!loaded" size="100" width="15" :value="$root.emotionScore">
+            <v-container class="fill-height pb-0">
+                <v-row align="start" justify="start" class="fill-height py-6">
+                    <v-col align="center" justify="start" class="py-0">
+                        <v-progress-circular :color="color" :indeterminate="!loaded" size="100" width="10" :value="$root.emotionScore">
                             <span class="font-weight-bold headline">
                                 {{$root.emotionScore <= 0 ? '' : `${$root.emotionScore}%`}}
                             </span>
                         </v-progress-circular>
+                        <p v-if="!loaded" class="pt-4">Analyzing webpage...</p>
                         <v-slide-y-transition>
                             <div v-show="loaded">
-                                <p class="body-2 pt-4" :style="{ color: color }">{{$root.description}} (Emotion Score: {{$root.emotionScore}}%)</p>
-                                <p class="pt-4" v-if="$root.highlighted">Words that the site displays a strong opinion about have been highlighted.</p>
+                                <p class="body-2 pt-4" :style="{ color: color }">{{$root.description}}</p>
+                                <p class="caption">Emotion Score: {{$root.emotionScore}}%</p>
+                                <p class="pt-2" v-if="$root.highlighted">Words mentioned in an emotional context have been highlighted.</p>
                             </div>
                         </v-slide-y-transition>
                     </v-col>

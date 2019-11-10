@@ -66,24 +66,14 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     switch (request.type) {
         case "emotionScore":
-            const emotionScore = request.emotionScore
+            const { emotionScore, color, description, highlighted } = request
             const text = `${emotionScore}%`
-            let color
-            if (emotionScore <= 15) {
-                color = "#4CAF50"
-            } else if (emotionScore > 15 && emotionScore <= 50) {
-                color = "#FF9800"
-            } else if (emotionScore > 50 && emotionScore <= 100) {
-                color = "#F44336"
-            } else {
-                color = "#3F51B5"
-            }
             chrome.browserAction.setBadgeBackgroundColor({color})
             chrome.browserAction.setBadgeText({text})
             setTimeout(() => {
                 vm.emotionScore = emotionScore
-                vm.description = request.overallDescription
-                vm.highlighted = request.highlighted
+                vm.description = description
+                vm.highlighted = highlighted
             }, 25)
             break
         default:
