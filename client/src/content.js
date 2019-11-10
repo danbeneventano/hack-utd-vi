@@ -3,14 +3,17 @@ import {API_URL} from "./api-url"
 import htmlArticleExtractor from 'html-article-extractor'
 
 let objects = []
-let emotionScore = 0
+let overallData = null
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     switch (request.type) {
         case "analyzePage":
-            if (emotionScore > 0) {
-                chrome.runtime.sendMessage({ type: "emotionScore", emotionScore: emotionScore })
-                //sendResponse({ type: "emotionScore", emotionScore: emotionScore })
+            if (overallData) {
+                chrome.runtime.sendMessage({
+                    type: "emotionScore",
+                    emotionScore: overallData.emotionScore,
+                    overallDescription: overallData.description
+                })
                 return
             }
             let text = await new Promise((resolve, reject) => {
@@ -18,10 +21,14 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 text = text.replace(/(\r\n|\n|\r)/gm, "")
                 resolve(text)
             })
-            let {data} = await axios.post(`${API_URL}/analyzeEntities`, {text})
-            console.log(data)
-            if (data.entities.length > 0) {
-                for (const entity of data.entities) {
+            let entityData = (await axios.post(`${API_URL}/analyzeEntities`, {text})).data
+            overallData = (await axios.post(`${API_URL}/analyze`, {text})).data
+            console.log(entityData)
+            console.log(overallData)
+            let highlighted = false
+            if (entityData.entities.length > 0) {
+                highlighted = true
+                for (const entity of entityData.entities) {
                     objects.push(
                         {
                             regex: new RegExp('\\b(' + entity.name + ')\\b'),
@@ -29,14 +36,14 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                             mentionText: entity.name
                         })
                 }
-                await new Promise(((resolve, reject) => {
-                    processDocumentv2()
-                    resolve()
-                }))
+                await processDocumentv2()
             }
-            emotionScore = 70
-            chrome.runtime.sendMessage({ type: "emotionScore", emotionScore: emotionScore })
-            //sendResponse({ type: "emotionScore", emotionScore: emotionScore })
+            chrome.runtime.sendMessage({
+                    type: "emotionScore",
+                    emotionScore: overallData.emotionScore,
+                    overallDescription: overallData.description,
+                    highlighted: highlighted
+                })
             break
         default:
             break
@@ -68,23 +75,28 @@ function handleTextNode(textNode) {
     //Compare the strings, as it should be faster than a second RegExp operation and
     //  lets us use the RegExp in only one place for maintainability.
     if (newHtml !== origText) {
-        let newSpan = document.createElement('span');
-        newSpan.innerHTML = newHtml;
-        textNode.parentNode.replaceChild(newSpan, textNode);
+        setTimeout(() => {
+            let newSpan = document.createElement('span');
+            newSpan.innerHTML = newHtml;
+            textNode.parentNode.replaceChild(newSpan, textNode);
+        }, 0)
     }
 }
 
 function processDocumentv2() {
-    let textNodes = [];
-    //Create a NodeIterator to get the text nodes in the body of the document
-    let nodeIter = document.createNodeIterator(document.body, NodeFilter.SHOW_TEXT);
-    let currentNode;
-    //Add the text nodes found to the list of text nodes to process.
-    while (currentNode = nodeIter.nextNode()) {
-        textNodes.push(currentNode);
-    }
-    //Process each text node
-    textNodes.forEach(function (el) {
-        handleTextNode(el);
-    });
+    return new Promise((resolve, reject) => {
+        let textNodes = [];
+        //Create a NodeIterator to get the text nodes in the body of the document
+        let nodeIter = document.createNodeIterator(document.body, NodeFilter.SHOW_TEXT);
+        let currentNode;
+        //Add the text nodes found to the list of text nodes to process.
+        while (currentNode = nodeIter.nextNode()) {
+            textNodes.push(currentNode);
+        }
+        //Process each text node
+        textNodes.forEach(function (el) {
+            handleTextNode(el);
+        });
+        resolve()
+    })
 }

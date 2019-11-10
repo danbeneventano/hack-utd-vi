@@ -50,7 +50,9 @@ const vm = new Vue({
     vuetify,
     data() {
         return {
-          emotionScore: 0
+          emotionScore: 0,
+            description: '',
+            highlighted: false
         }
     },
     render: h => h(AppComponent),
@@ -80,6 +82,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             chrome.browserAction.setBadgeText({text})
             setTimeout(() => {
                 vm.emotionScore = emotionScore
+                vm.description = request.overallDescription
+                vm.highlighted = request.highlighted
             }, 25)
             break
         default:

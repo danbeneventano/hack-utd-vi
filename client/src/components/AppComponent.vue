@@ -4,12 +4,17 @@
             <v-container>
                 <v-row align="center" justify="center" class="fill-height">
                     <v-col align="center" justify="center">
-                        <v-progress-circular color="primary" :indeterminate="!loaded" size="100" width="15" :value="percent">
+                        <v-progress-circular :color="color" :indeterminate="!loaded" size="100" width="15" :value="$root.emotionScore">
                             <span class="font-weight-bold headline">
                                 {{$root.emotionScore <= 0 ? '' : `${$root.emotionScore}%`}}
                             </span>
                         </v-progress-circular>
-                        <p class="body-2 pt-4" :style="{ color: color }" v-if="loaded">This text is mostly positive</p>
+                        <v-slide-y-transition>
+                            <div v-show="loaded">
+                                <p class="body-2 pt-4" :style="{ color: color }">{{$root.description}} (Emotion Score: {{$root.emotionScore}}%)</p>
+                                <p class="pt-4" v-if="$root.highlighted">Words that the site displays a strong opinion about have been highlighted.</p>
+                            </div>
+                        </v-slide-y-transition>
                     </v-col>
                 </v-row>
             </v-container>
@@ -23,13 +28,8 @@ export default {
     name: 'AppComponent',
     data() {
         return {
-            percent: 0
+
         }
-    },
-    mounted() {
-        setTimeout(() => {
-            this.percent = this.$root.emotionScore
-        }, 100)
     },
     computed: {
         loaded() {

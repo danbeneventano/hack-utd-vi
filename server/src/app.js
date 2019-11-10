@@ -19,7 +19,7 @@ router.post("/analyze", async (req, res) => {
     const score = sentiment.documentSentiment.score;
     const max = 0.01 * text.length;
     const emotionScore =(magnitude / max * 100);
-    sentiment.emotionScore = emotionScore;
+    sentiment.emotionScore = Math.round(emotionScore);
     if(score > .7 &&  emotionScore > 50){
         sentiment.description = "The text provides mixed bias."
     }else if(score > 0.3  &&  emotionScore > 50  ){
