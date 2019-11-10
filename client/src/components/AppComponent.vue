@@ -1,7 +1,7 @@
 <template>
-    <v-app id="app" style="width: 200px; height: 300px; background-color: #FAFAFA">
+    <v-app id="app" style="width: 200px; height: 300px; background-color: #ffffff">
         <v-content>
-            <v-container class="fill-height pb-0">
+            <v-container class="fill-height pb-0" v-if="!$root.disabled">
                 <v-row align="start" justify="start" class="fill-height py-6">
                     <v-col align="center" justify="start" class="py-0">
                         <v-progress-circular :color="color" :indeterminate="!loaded" size="100" width="10" :value="$root.emotionScore">
@@ -17,6 +17,13 @@
                                 <p class="pt-2" v-if="$root.highlighted">Words mentioned in an emotional context have been highlighted.</p>
                             </div>
                         </v-slide-y-transition>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-container class="fill-height" v-else>
+                <v-row align="center" justify="center" class="fill-height">
+                    <v-col align="center" justify="center">
+                        <p class="subtitle-1">Emotilyzer is disabled on this page.</p>
                     </v-col>
                 </v-row>
             </v-container>

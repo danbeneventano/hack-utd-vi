@@ -52,7 +52,8 @@ const vm = new Vue({
         return {
           emotionScore: 0,
             description: '',
-            highlighted: false
+            highlighted: false,
+            disabled: false
         }
     },
     render: h => h(AppComponent),
@@ -60,6 +61,10 @@ const vm = new Vue({
 })
 
 chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+    if (!tabs[0].url.startsWith("http")) {
+        vm.disabled = true
+        return
+    }
     chrome.tabs.sendMessage(tabs[0].id, {type: "analyzePage"});
 });
 

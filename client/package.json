@@ -1,8 +1,8 @@
 {
-  "name": "client",
+  "name": "emotilyzer-client",
   "version": "1.0.0",
-  "description": "A Vue.js web extension",
-  "author": "Dan Beneventano <danbeneventano@protonmail.com>",
+  "description": "Analyze the emotional content of any webpage.",
+  "author": "Dan Beneventano <danbeneventano@gmail.com>",
   "scripts": {
     "prettier": "prettier \"src/**/*.{js,vue}\"",
     "prettier:write": "npm run prettier -- --write",

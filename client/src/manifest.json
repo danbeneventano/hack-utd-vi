@@ -1,6 +1,6 @@
 {
-  "name": "client",
-  "description": "A Vue.js web extension",
+  "name": "Emotilyzer",
+  "description": "Analyze the emotional content of any webpage.",
   "version": "0.0.1",
   "manifest_version": 2,
   "icons": {
@@ -8,7 +8,7 @@
     "128": "icons/icon_128.png"
   },
   "browser_action": {
-    "default_title": "client",
+    "default_title": "Emotilyzer",
     "default_popup": "popup.html"
   },
   "background": {

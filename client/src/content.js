@@ -25,8 +25,6 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             })
             let entityData = (await axios.post(`${API_URL}/analyzeEntities`, {text})).data
             overallData = (await axios.post(`${API_URL}/analyze`, {text})).data
-            console.log(entityData)
-            console.log(overallData)
             let highlighted = false
             if (entityData.entities.length > 0) {
                 highlighted = true
